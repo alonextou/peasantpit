@@ -1,18 +1,21 @@
 // alert('The Doctor');
 //Creates game window dimension and Auto render.t
-var game = new Phaser.Game(640,360, Phaser.AUTO);
+var game = new Phaser.Game("100", "100", Phaser.AUTO);
 var GameState = {
   preload: function(){
     game.load.image('player', 'assets/images/player.png');
     game.load.image('bg', 'assets/images/background.jpg');
   },
   create: function(){
-    game.world.setBounds(-1000, -1000, 2000, 2000);
-    land = game.add.tileSprite(0, 0, 800, 600, 'bg');
-    player = game.add.sprite(320, 180, 'player');
+    // game.world.setBounds(0, 0, game.world.width, game.world.height);
+    game.physics.startSystem(Phaser.Physics.ARCADE);
+    land = game.add.tileSprite(0, 0, game.world.width, game.world.height, 'bg');
+    player = game.add.sprite(game.world.centerX, game.world.centerY, 'player');
     player.anchor.setTo(0.5,0.5);
-    game.physics.arcade.enable(player);
+    // game.physics.arcade.enable(player);
+    game.physics.enable(player, Phaser.Physics.ARCADE);
     cursors = game.input.keyboard.createCursorKeys();
+    player.body.collideWorldBounds = true;
   },
   update: function(){
 
