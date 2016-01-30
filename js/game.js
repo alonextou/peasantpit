@@ -12,6 +12,7 @@ var GameState = {
     land = game.add.tileSprite(0, 0, game.world.width, game.world.height, 'bg');
     player = game.add.sprite(game.world.centerX, game.world.centerY, 'player');
     player.anchor.setTo(0.5,0.5);
+    player.scale.setTo(0.3,0.3);
     // game.physics.arcade.enable(player);
     game.physics.enable(player, Phaser.Physics.ARCADE);
     cursors = game.input.keyboard.createCursorKeys();
@@ -25,12 +26,10 @@ var GameState = {
         if (cursors.left.isDown)
         {
             player.body.velocity.x = -200;
-            player.scale.x = 1;
         }
         else if (cursors.right.isDown)
         {
             player.body.velocity.x = 200;
-            player.scale.x = -1;
         }
 
         if (cursors.up.isDown)
