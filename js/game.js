@@ -1,6 +1,9 @@
 // alert('The Doctor');
 //Creates game window dimension and Auto render.
 var w = window.innerWidth;
+if (w > 500) {
+    w = window.innerHeight;
+}
 var game = new Phaser.Game(w, w, Phaser.AUTO);
 var GameState = {
   preload: function(){
