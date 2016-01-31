@@ -1,34 +1,6 @@
-var game = new Phaser.Game(800, 600, Phaser.AUTO, 'phaser-example', { preload: preload, create: create, update: update, render: render });
+var game = new Phaser.Game(800, 800, Phaser.AUTO, 'phaser-example', { preload: preload, create: create, update: update, render: render });
 
-var currentSpeed = 0;
-
-EnemyPlayer = function (index, game, player) {
-
-    var x = game.world.randomX;
-    var y = game.world.randomY;
-
-    this.game = game;
-    this.health = 3;
-    this.player = player;
-    this.fireRate = 1000;
-    this.nextFire = 0;
-    this.alive = true;
-
-    this.enemy = game.add.sprite(x, y, 'enemy', 'enemy');
-
-    this.enemy.anchor.set(0.5);
-
-    this.enemy.name = index.toString();
-    game.physics.enable(this.enemy, Phaser.Physics.ARCADE);
-    this.enemy.body.immovable = false;
-    this.enemy.body.collideWorldBounds = true;
-    this.enemy.body.bounce.setTo(1, 1);
-
-    this.enemy.angle = game.rnd.angle();
-
-    game.physics.arcade.velocityFromRotation(this.enemy.rotation, 100, this.enemy.body.velocity);
-
-};
+//var currentSpeed = 0;
 
 function preload () {
     game.load.image('player', 'assets/images/player.png');
@@ -39,78 +11,82 @@ function preload () {
 
 function create () {
 
-    game.world.setBounds(-1000, -1000, 2000, 2000);
+    game.world.setBounds(0, 0, 2000, 2000);
 
-    background = game.add.tileSprite(0, 0, 800, 600, 'background');
+    background = game.add.tileSprite(0, 0, 800, 800, 'background');
     background.fixedToCamera = true;
 
-    campfire = game.add.sprite(0, 0, 'campfire');
+    // campfire
+    campfire = game.add.sprite(game.world.centerX, game.world.centerY, 'campfire');
+    game.physics.arcade.enable(campfire);
     campfire.anchor.setTo(0.5, 0.5);
 
-    player = game.add.sprite(100, 100, 'player');
+    // player
+    player = game.add.sprite(game.world.centerX + 200, game.world.centerY + 200, 'player');
+    game.physics.arcade.enable(player);
+    player.scale.setTo(.4, .4);
     player.anchor.setTo(0.5, 0.5);
-
-    game.physics.enable([player, campfire], Phaser.Physics.ARCADE);
-
-    player.body.drag.set(0.2);
-    player.body.maxVelocity.setTo(400, 400);
     player.body.collideWorldBounds = true;
+
+    // enemy
+    enemy = game.add.sprite(game.world.centerX - 200, game.world.centerY - 200, 'enemy');
+    game.physics.arcade.enable(enemy);
+    enemy.scale.setTo(.4, .4);
+    enemy.anchor.setTo(0.5, 0.5);
+    enemy.body.drag.set(1000);
+    enemy.body.collideWorldBounds = true;
+    enemy.body.setSize(2, 2, 10, 10);
+
+    // camera
+    game.camera.follow(player);
+    game.camera.deadzone = new Phaser.Rectangle(200, 200, 400, 400);
+    game.camera.focusOnXY(0, 0);
 
     cursors = game.input.keyboard.createCursorKeys();
 
-    enemies = [];
+}
 
-    enemiesTotal = 20;
-    enemiesAlive = 20;
+function playerBurning (campfire, player) {
 
-    for (var i = 0; i < enemiesTotal; i++)
-    {
-        enemies.push(new EnemyPlayer(i, game, player));
-    }
-
-    game.camera.follow(player);
-    game.camera.deadzone = new Phaser.Rectangle(150, 150, 500, 300);
-    game.camera.focusOnXY(0, 0);
+    console.log('player damage');
+    player.tint = 0xff0000;
 
 }
 
-function collisionHandler (campfire, player) {
+function enemyBurning (campfire, player) {
 
-   console.log('damage')
+    console.log('enemy damage');
+    enemy.tint = 0xff0000;
 
 }
 
 function update () {
 
-    game.physics.arcade.overlap(campfire, player, collisionHandler, null, this);
+    player.tint = 0xffffff;
+    game.physics.arcade.overlap(campfire, player, playerBurning);
+    game.physics.arcade.overlap(campfire, enemy, enemyBurning);
+    game.physics.arcade.collide(enemy, player);
 
-
+    
     if (cursors.left.isDown)
     {
-        player.angle -= 4;
+        player.angle -= 5;
     }
     else if (cursors.right.isDown)
     {
-        player.angle += 4;
+        player.angle += 5;
     }
 
     if (cursors.up.isDown)
     {
-        //  The speed we'll travel at
-        currentSpeed = 300;
+        currentSpeed = 200;
     }
     else
     {
-        if (currentSpeed > 0)
-        {
-            currentSpeed -= 4;
-        }
+        currentSpeed = 0;
     }
 
-    if (currentSpeed > 0)
-    {
-        game.physics.arcade.velocityFromRotation(player.rotation, currentSpeed, player.body.velocity);
-    }
+    game.physics.arcade.velocityFromRotation(player.rotation, currentSpeed, player.body.velocity);
 
     background.tilePosition.x = -game.camera.x;
     background.tilePosition.y = -game.camera.y;
