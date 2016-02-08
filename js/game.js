@@ -11,6 +11,9 @@ function preload () {
 
 function create () {
 
+    game.physics.startSystem(Phaser.Physics.P2JS);
+    game.physics.p2.restitution = 0.9;
+
     game.world.setBounds(0, 0, 2000, 2000);
 
     background = game.add.tileSprite(0, 0, 800, 800, 'background');
@@ -18,24 +21,25 @@ function create () {
 
     // campfire
     campfire = game.add.sprite(game.world.centerX, game.world.centerY, 'campfire');
-    game.physics.arcade.enable(campfire);
-    campfire.anchor.setTo(0.5, 0.5);
+    //game.physics.arcade.enable(campfire);
+    //campfire.anchor.setTo(0.5, 0.5);
 
     // player
     player = game.add.sprite(game.world.centerX + 200, game.world.centerY + 200, 'player');
-    game.physics.arcade.enable(player);
-    player.scale.setTo(.4, .4);
-    player.anchor.setTo(0.5, 0.5);
-    player.body.collideWorldBounds = true;
+    //game.physics.arcade.enable(player);
+    game.physics.p2.enable(player);
+    //player.scale.setTo(.4, .4);
+    //player.anchor.setTo(0.5, 0.5);
+    //player.body.collideWorldBounds = true;
 
     // enemy
     enemy = game.add.sprite(game.world.centerX - 200, game.world.centerY - 200, 'enemy');
-    game.physics.arcade.enable(enemy);
-    enemy.scale.setTo(.4, .4);
-    enemy.anchor.setTo(0.5, 0.5);
-    enemy.body.drag.set(1000);
-    enemy.body.collideWorldBounds = true;
-    enemy.body.setSize(2, 2, 10, 10);
+    //game.physics.arcade.enable(enemy);
+    game.physics.p2.enable(enemy);
+    //enemy.scale.setTo(.4, .4);
+    //enemy.anchor.setTo(0.5, 0.5);
+    //enemy.body.drag.set(1000);
+    //enemy.body.collideWorldBounds = true;
 
     // camera
     game.camera.follow(player);
@@ -67,7 +71,30 @@ function update () {
     game.physics.arcade.overlap(campfire, enemy, enemyBurning);
     game.physics.arcade.collide(enemy, player);
 
-    
+    if (cursors.left.isDown)
+    {
+        player.body.rotateLeft(100);
+    }
+    else if (cursors.right.isDown)
+    {
+        player.body.rotateRight(100);
+    }
+    else
+    {
+        player.body.setZeroRotation();
+    }
+
+    if (cursors.up.isDown)
+    {
+        player.body.thrust(400);
+        player.body.velocity = 0; 
+    }
+    else if (cursors.down.isDown)
+    {
+        player.body.reverse(400);
+    }
+
+    /*
     if (cursors.left.isDown)
     {
         player.angle -= 5;
@@ -85,8 +112,11 @@ function update () {
     {
         currentSpeed = 0;
     }
+    */
 
-    game.physics.arcade.velocityFromRotation(player.rotation, currentSpeed, player.body.velocity);
+
+
+    //game.physics.arcade.velocityFromRotation(player.rotation, currentSpeed, player.body.velocity);
 
     background.tilePosition.x = -game.camera.x;
     background.tilePosition.y = -game.camera.y;
