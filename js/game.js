@@ -86,12 +86,14 @@ function update () {
 
     if (cursors.up.isDown)
     {
-        player.body.thrust(400);
-        player.body.velocity = 0; 
+        player.body.damping = 1;
+        player.body.thrust(50000);
+
     }
     else if (cursors.down.isDown)
     {
-        player.body.reverse(400);
+      player.body.damping = 1;
+        player.body.reverse(50000);
     }
 
     /*
