@@ -1,130 +1,110 @@
-var game = new Phaser.Game(800, 800, Phaser.AUTO, 'phaser-example', { preload: preload, create: create, update: update, render: render });
+var game = new Phaser.Game(800, 600, Phaser.AUTO, 'phaser-example', { preload: preload, create: create, update: update, render: render });
 
-//var currentSpeed = 0;
+function preload() {
 
-function preload () {
-    game.load.image('player', 'assets/images/player.png');
-    game.load.image('enemy', 'assets/images/enemy.png');
-    game.load.image('background', 'assets/images/background.jpg');
+    game.load.image('stars', 'assets/images/background.jpg');
+    game.load.image('ship', 'assets/images/player.png');
+    game.load.image('panda', 'assets/images/sheep.png');
+    game.load.image('sweet', 'assets/images/sheep.png');
     game.load.image('campfire', 'assets/images/campfire.png');
+
 }
 
-function create () {
+var ship;
+var starfield;
+var cursors;
+
+function create() {
 
     game.physics.startSystem(Phaser.Physics.P2JS);
-    game.physics.p2.restitution = 0.9;
+    game.physics.p2.restitution = .1;
 
-    game.world.setBounds(0, 0, 2000, 2000);
+    starfield = game.add.tileSprite(0, 0, 800, 600, 'stars');
+    starfield.fixedToCamera = true;
 
-    background = game.add.tileSprite(0, 0, 800, 800, 'background');
-    background.fixedToCamera = true;
 
-    // campfire
     campfire = game.add.sprite(game.world.centerX, game.world.centerY, 'campfire');
-    //game.physics.arcade.enable(campfire);
-    //campfire.anchor.setTo(0.5, 0.5);
+    campfire.anchor.setTo(.5);
 
-    // player
-    player = game.add.sprite(game.world.centerX + 200, game.world.centerY + 200, 'player');
-    //game.physics.arcade.enable(player);
-    game.physics.p2.enable(player);
-    //player.scale.setTo(.4, .4);
-    //player.anchor.setTo(0.5, 0.5);
-    //player.body.collideWorldBounds = true;
+    var panda = game.add.sprite(game.world.randomX, game.world.randomY, 'panda');
+    game.physics.p2.enable(panda, false);
+    panda.body.setCircle(30, 0, 0, 0);
+    panda.body.damping = .99;
 
-    // enemy
-    enemy = game.add.sprite(game.world.centerX - 200, game.world.centerY - 200, 'enemy');
-    //game.physics.arcade.enable(enemy);
-    game.physics.p2.enable(enemy);
-    //enemy.scale.setTo(.4, .4);
-    //enemy.anchor.setTo(0.5, 0.5);
-    //enemy.body.drag.set(1000);
-    //enemy.body.collideWorldBounds = true;
+    var sweet = game.add.sprite(game.world.randomX, game.world.randomY, 'sweet');
+    game.physics.p2.enable(sweet, false);
+    sweet.body.setCircle(30, 0, 0, 0);
+    sweet.body.damping = .99;
 
-    // camera
-    game.camera.follow(player);
-    game.camera.deadzone = new Phaser.Rectangle(200, 200, 400, 400);
-    game.camera.focusOnXY(0, 0);
+    ship = game.add.sprite(200, 200, 'ship');
+
+    //  Create our physics body - a 28px radius circle. Set the 'false' parameter below to 'true' to enable debugging
+    game.physics.p2.enable(ship, false);
+
+    ship.body.setCircle(30);
+    ship.body.fixedRotation = false;
+    ship.body.damping = 1;
+
+    game.camera.follow(ship);
+
+    //  Here we create a Body specific callback.
+    //  Note that only impact events between the ship and the panda are used here, the sweet/candy object is ignored.
+    ship.body.createBodyCallback(panda, hitPanda, this);
+
+    //  And before this will happen, we need to turn on impact events for the world
+    game.physics.p2.setImpactEvents(true);
 
     cursors = game.input.keyboard.createCursorKeys();
 
 }
 
-function playerBurning (campfire, player) {
+function hitPanda(body1, body2) {
 
-    console.log('player damage');
-    player.tint = 0xff0000;
-
-}
-
-function enemyBurning (campfire, player) {
-
-    console.log('enemy damage');
-    enemy.tint = 0xff0000;
+    //  body1 is the space ship (as it's the body that owns the callback)
+    //  body2 is the body it impacted with, in this case our panda
+    //  As body2 is a Phaser.Physics.P2.Body object, you access its owner (the sprite) via the sprite property:
+    //body2.sprite.alpha -= 0.1;
 
 }
 
-function update () {
+function update() {
 
-    player.tint = 0xffffff;
-    game.physics.arcade.overlap(campfire, player, playerBurning);
-    game.physics.arcade.overlap(campfire, enemy, enemyBurning);
-    game.physics.arcade.collide(enemy, player);
+    ship.body.setZeroVelocity();
 
     if (cursors.left.isDown)
     {
-        player.body.rotateLeft(100);
+        ship.body.rotateLeft(100);
     }
     else if (cursors.right.isDown)
     {
-        player.body.rotateRight(100);
-    }
-    else
-    {
-        player.body.setZeroRotation();
+        ship.body.rotateRight(100);
+    } else {
+      ship.body.setZeroRotation();
     }
 
     if (cursors.up.isDown)
     {
-        player.body.damping = 1;
-        player.body.thrust(50000);
-
+        ship.body.thrust(30000);
     }
     else if (cursors.down.isDown)
     {
-      player.body.damping = 1;
-        player.body.reverse(50000);
+        ship.body.thrust(-30000);
     }
 
-    /*
-    if (cursors.left.isDown)
+    if (!game.camera.atLimit.x)
     {
-        player.angle -= 5;
+        starfield.tilePosition.x += (ship.body.velocity.x * 16) * game.time.physicsElapsed;
     }
-    else if (cursors.right.isDown)
+
+    if (!game.camera.atLimit.y)
     {
-        player.angle += 5;
+        starfield.tilePosition.y += (ship.body.velocity.y * 16) * game.time.physicsElapsed;
     }
-
-    if (cursors.up.isDown)
-    {
-        currentSpeed = 200;
-    }
-    else
-    {
-        currentSpeed = 0;
-    }
-    */
-
-
-
-    //game.physics.arcade.velocityFromRotation(player.rotation, currentSpeed, player.body.velocity);
-
-    background.tilePosition.x = -game.camera.x;
-    background.tilePosition.y = -game.camera.y;
 
 }
 
-function render () {
+function render() {
+
+    game.debug.text('Sacrifice all the things!', 32, 32);
 
 }
