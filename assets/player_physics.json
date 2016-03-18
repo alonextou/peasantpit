@@ -1,0 +1,26 @@
+{ 
+    
+    "enemy": [
+        
+        {
+            "density": 2, "friction": 0, "bounce": 0, 
+            "filter": { "categoryBits": 1, "maskBits": 65535 },
+            "shape": [   15, 148  ,  4, 91  ,  41, 91  ,  158, 145  ,  87, 190  ]
+        } ,
+        {
+            "density": 2, "friction": 0, "bounce": 0, 
+            "filter": { "categoryBits": 1, "maskBits": 65535 },
+            "shape": [   164, 77  ,  158, 145  ,  129, 88  ,  138, 8  ]
+        } ,
+        {
+            "density": 2, "friction": 0, "bounce": 0, 
+            "filter": { "categoryBits": 1, "maskBits": 65535 },
+            "shape": [   158, 145  ,  41, 91  ,  129, 88  ]
+        } ,
+        {
+            "density": 2, "friction": 0, "bounce": 0, 
+            "filter": { "categoryBits": 1, "maskBits": 65535 },
+            "shape": [   41, 91  ,  4, 91  ,  28, 7  ]
+        }
+    ]
+}

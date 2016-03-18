@@ -8,10 +8,15 @@ function preload() {
     game.load.image('sweet', 'assets/images/sheep.png');
     game.load.image('campfire', 'assets/images/campfire.png');
 
+    //this.game.load.physics("player_physics", "assets/player_physics.json");
+
 }
 
-var ship;
 var starfield;
+var campfire;
+var ship;
+var panda;
+var sweet;
 var cursors;
 
 function create() {
@@ -22,25 +27,33 @@ function create() {
     starfield = game.add.tileSprite(0, 0, 800, 600, 'stars');
     starfield.fixedToCamera = true;
 
-
+    // campfire
     campfire = game.add.sprite(game.world.centerX, game.world.centerY, 'campfire');
     campfire.anchor.setTo(.5);
+    //game.physics.enable(campfire, Phaser.Physics.ARCADE);
+    game.physics.p2.enable(campfire, false);
+    campfire.body.setCircle(40, 0, 0, 0);
 
-    var panda = game.add.sprite(game.world.randomX, game.world.randomY, 'panda');
+    // panda
+    panda = game.add.sprite(game.world.randomX, game.world.randomY, 'panda');
     game.physics.p2.enable(panda, false);
     panda.body.setCircle(30, 0, 0, 0);
     panda.body.damping = .99;
+    panda.body.angularDamping = 1;
 
-    var sweet = game.add.sprite(game.world.randomX, game.world.randomY, 'sweet');
+    // sweet
+    sweet = game.add.sprite(game.world.randomX, game.world.randomY, 'sweet');
     game.physics.p2.enable(sweet, false);
     sweet.body.setCircle(30, 0, 0, 0);
     sweet.body.damping = .99;
+    sweet.body.angularDamping = 1;
 
     ship = game.add.sprite(200, 200, 'ship');
 
     //  Create our physics body - a 28px radius circle. Set the 'false' parameter below to 'true' to enable debugging
     game.physics.p2.enable(ship, false);
-
+    //ship.body.loadPolygon("player_physics", "ship");
+    //ship.body.loadPolygon("player_physics", "player");
     ship.body.setCircle(30);
     ship.body.fixedRotation = false;
     ship.body.damping = 1;
@@ -52,7 +65,9 @@ function create() {
     ship.body.createBodyCallback(panda, hitPanda, this);
 
     //  And before this will happen, we need to turn on impact events for the world
-    game.physics.p2.setImpactEvents(true);
+    //game.physics.p2.setImpactEvents(true);
+
+    game.physics.p2.setPostBroadphaseCallback(collideCampfire, this);
 
     cursors = game.input.keyboard.createCursorKeys();
 
@@ -67,17 +82,49 @@ function hitPanda(body1, body2) {
 
 }
 
+function spriteBurning (object) {
+  console.log('player damage');
+  console.log(object)
+  eval(object).tint = 0xff0000;
+}
+
+function collideCampfire (body1, body2) {
+    if (body1.sprite.key === 'campfire') {
+      spriteBurning(body2.sprite.key)
+      return false;
+    } else if (body2.sprite.key === 'campfire') {
+      spriteBurning(body1.sprite.key)
+      return false;
+    }
+    return true;
+}
+
 function update() {
 
-    ship.body.setZeroVelocity();
+    ship.tint = 0xffffff;
+    panda.tint = 0xffffff;
+    sweet.tint = 0xffffff;
+
+    //panda.body.setZeroRotation();
+    //game.physics.p2.overlap(campfire, ship, playerBurning);
+
+    /*
+    var bodyA = game.physics.p2.getBody(ship);
+    var bodyB = game.physics.p2.getBody(campfire);
+
+    if(p2.Broadphase.aabbCheck(bodyA,bodyB)){
+      console.log("ok");
+    }
+    */
+
 
     if (cursors.left.isDown)
     {
-        ship.body.rotateLeft(100);
+        ship.body.rotateLeft(90);
     }
     else if (cursors.right.isDown)
     {
-        ship.body.rotateRight(100);
+        ship.body.rotateRight(90);
     } else {
       ship.body.setZeroRotation();
     }
