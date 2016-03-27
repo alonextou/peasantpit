@@ -1,0 +1,36 @@
+{
+
+    "playerArms": [
+
+        {
+            "density": 2, "friction": 0, "bounce": 0,
+            "filter": { "categoryBits": 1, "maskBits": 65535 },
+            "shape": [   50, 23  ,  30, 52  ,  20, 20  ,  37, 9  ]
+        } ,
+        {
+            "density": 2, "friction": 0, "bounce": 0,
+            "filter": { "categoryBits": 1, "maskBits": 65535 },
+            "shape": [   149, 14  ,  166, 92  ,  139, 51  ,  121, 21  ,  133, 7  ]
+        } ,
+        {
+            "density": 2, "friction": 0, "bounce": 0,
+            "filter": { "categoryBits": 1, "maskBits": 65535 },
+            "shape": [   21, 153  ,  87, 100  ,  137, 83  ,  166, 92  ,  150, 157  ,  87, 190  ]
+        } ,
+        {
+            "density": 2, "friction": 0, "bounce": 0,
+            "filter": { "categoryBits": 1, "maskBits": 65535 },
+            "shape": [   166, 92  ,  137, 83  ,  139, 51  ]
+        } ,
+        {
+            "density": 2, "friction": 0, "bounce": 0,
+            "filter": { "categoryBits": 1, "maskBits": 65535 },
+            "shape": [   30, 52  ,  37, 87  ,  21, 153  ,  3, 101  ,  20, 20  ]
+        } ,
+        {
+            "density": 2, "friction": 0, "bounce": 0,
+            "filter": { "categoryBits": 1, "maskBits": 65535 },
+            "shape": [   87, 100  ,  21, 153  ,  37, 87  ]
+        }
+    ]
+}
