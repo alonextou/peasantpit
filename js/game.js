@@ -1,3 +1,26 @@
+Sheep = function(index, game, player) {
+  this.game = game;
+  this.player = player;
+  this.sheep = game.add.sprite(game.world.randomX, game.world.randomY, 'sheep1');
+
+  this.game.physics.p2.enable(this.sheep, false);
+  this.sheep.body.setCircle(40, 0, 0, 0);
+  this.sheep.body.damping = .99;
+  this.sheep.body.angularDamping = 1;
+  this.sheep.body.fixedRotation = true;
+}
+
+function createSheep() {
+
+  var sheep = game.add.sprite(game.world.randomX, game.world.randomY, 'sheep1');
+  game.physics.p2.enable(sheep, false);
+  sheep.body.setCircle(40, 0, 0, 0);
+  sheep.body.damping = .99;
+  sheep.body.angularDamping = 1;
+  sheep.body.fixedRotation = true;
+
+}
+
 var game = new Phaser.Game(800, 600, Phaser.AUTO, 'phaser-example', { preload: preload, create: create, update: update, render: render });
 
 function preload() {
@@ -47,21 +70,29 @@ function create() {
     emitter.setScale(0.8, 0, 0.8, 0, 2000);
     emitter.start(false, 2000, 5);
 
+    createSheep();
+    //sheeps = [];
+    //sheeps.push(new EnemyTank(3, game, tank, enemyBullets));
+
     // sheep1
+    /*
     sheep1 = game.add.sprite(game.world.randomX, game.world.randomY, 'sheep1');
     game.physics.p2.enable(sheep1, false);
     sheep1.body.setCircle(40, 0, 0, 0);
     sheep1.body.damping = .99;
     sheep1.body.angularDamping = 1;
     sheep1.body.fixedRotation = true;
+    */
 
     // sheep2
+    /*
     sheep2 = game.add.sprite(game.world.randomX, game.world.randomY, 'sheep2');
     game.physics.p2.enable(sheep2, false);
     sheep2.body.setCircle(40, 0, 0, 0);
     sheep2.body.damping = .99;
     sheep2.body.angularDamping = 1;
     //sheep2.body.fixedRotation = true;
+    */
 
     // playerArms
     playerArms = game.add.sprite(200, 200, 'playerArms');
@@ -89,8 +120,8 @@ function create() {
 
 function spriteBurning (object) {
   console.log('player damage');
-  eval(object).tint = 0xff0000;
-  eval(object).body.thrust(-500);
+  //eval(object).tint = 0xff0000;
+  //eval(object).body.thrust(-500);
 
   //emitter = game.add.emitter(eval(object).body.x, eval(object).body.y, 100);
   //emitter.makeParticles( [ 'fire1', 'fire2', 'fire3', 'smoke' ] );
@@ -106,9 +137,11 @@ function collideCampfire (body1, body2) {
 
     //if (hasCampfire) console.log('campfire')
     if (body1.sprite.key === 'sheep1') {
+      spriteBurning('sheep1')
       //eval(body1.sprite.key).body.thrust(0);
       console.log('sheep1')
     } else if (body2.sprite.key === 'sheep2') {
+      spriteBurning('sheep2')
       //eval(body2.sprite.key).body.thrust(0);
       console.log('sheep2');
     }
@@ -137,6 +170,7 @@ function collideCampfire (body1, body2) {
 function update() {
 
     player.tint = 0xffffff;
+    /*
     sheep1.tint = 0xffffff;
     sheep2.tint = 0xffffff;
 
@@ -147,6 +181,7 @@ function update() {
     s2angle = Math.atan2(campfire.body.y - sheep2.body.y, campfire.body.x - sheep2.body.x) * 180 / Math.PI;
     sheep2.body.angle = -s2angle;
     sheep2.body.thrust(500);
+    */
 
     if (cursors.left.isDown)
     {
